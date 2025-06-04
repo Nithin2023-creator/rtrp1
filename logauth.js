@@ -1536,34 +1536,72 @@ app.post('/api/send-otp', async (req, res) => {
 });
 
 app.get('/api/check-email/:email', async (req, res) => {
+    // Set CORS headers explicitly
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    
     try {
-        // Set specific headers for this endpoint
-        res.header('Cache-Control', 'no-store, no-cache, must-revalidate');
-        res.header('Pragma', 'no-cache');
-        res.header('Expires', '0');
-        
         const email = req.params.email;
         
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ 
+                success: false,
                 exists: false, 
                 message: 'Invalid email format' 
             });
         }
 
+        // Add delay to prevent rapid requests
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         const user = await User.findOne({ email: email });
-        res.json({ 
+        
+        return res.status(200).json({ 
+            success: true,
             exists: !!user,
+            checked: email,
             timestamp: new Date().toISOString()
         });
     } catch (error) {
         console.error('Email check error:', error);
-        res.status(500).json({ 
+        return res.status(500).json({ 
+            success: false,
             exists: false, 
             message: 'Server error while checking email',
             error: error.message 
+        });
+    }
+});
+
+app.post('/api/check-email', express.json(), async (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required'
+            });
+        }
+
+        const user = await User.findOne({ email });
+        return res.status(200).json({ 
+            success: true,
+            exists: !!user,
+            checked: email
+        });
+    } catch (error) {
+        console.error('Email check error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while checking email'
         });
     }
 });
