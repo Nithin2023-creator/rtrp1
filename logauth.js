@@ -36,14 +36,25 @@ app.use(limiter);
 app.use(cors({
     origin: [
         'https://rtrp1.vercel.app',
+        'https://fdms-kmit.vercel.app',
         'http://localhost:4009',
         'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Content-Length', 'X-Requested-With'],
     credentials: true,
-    maxAge: 86400 // 24 hours
+    maxAge: 86400, // 24 hours
+    optionsSuccessStatus: 200
 }));
+
+// Add security headers
+app.use((req, res, next) => {
+    res.header('X-Content-Type-Options', 'nosniff');
+    res.header('X-Frame-Options', 'DENY');
+    res.header('X-XSS-Protection', '1; mode=block');
+    next();
+});
 
 app.use(express.json());
 
