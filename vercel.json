@@ -4,20 +4,12 @@
     {
       "src": "logauth.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/",
-      "dest": "/login_auth.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "logauth.js"
     }
   ]
 }

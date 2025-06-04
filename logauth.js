@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -29,13 +22,29 @@ mongoose.connection.once('open', () => {
 
 
 const app = express();
+
+// Add rate limiting
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter);
+
+// Updated CORS configuration
 app.use(cors({
     origin: [
-        'https://fdms-kmit.vercel.app', // Your Vercel URL
-        'http://localhost:4009'        // Local development
+        'https://rtrp1.vercel.app',
+        'http://localhost:4009',
+        'http://localhost:3000'
     ],
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    maxAge: 86400 // 24 hours
 }));
+
 app.use(express.json());
 
 // Add at the top with other requires
@@ -48,8 +57,9 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:4009",
-      methods: ["GET", "POST"]
+      origin: ["https://rtrp1.vercel.app", "http://localhost:4009"],
+      methods: ["GET", "POST"],
+      credentials: true
     }
 });
 
@@ -1527,10 +1537,34 @@ app.post('/api/send-otp', async (req, res) => {
 
 app.get('/api/check-email/:email', async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.params.email });
-        res.json({ exists: !!user });
+        // Set specific headers for this endpoint
+        res.header('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.header('Pragma', 'no-cache');
+        res.header('Expires', '0');
+        
+        const email = req.params.email;
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ 
+                exists: false, 
+                message: 'Invalid email format' 
+            });
+        }
+
+        const user = await User.findOne({ email: email });
+        res.json({ 
+            exists: !!user,
+            timestamp: new Date().toISOString()
+        });
     } catch (error) {
-        res.status(500).json({ exists: false, message: error.message });
+        console.error('Email check error:', error);
+        res.status(500).json({ 
+            exists: false, 
+            message: 'Server error while checking email',
+            error: error.message 
+        });
     }
 });
 
