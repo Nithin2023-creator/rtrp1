@@ -230,7 +230,7 @@ const User = mongoose.model('User', userSchema);
 const googleClient = new OAuth2Client({
     clientId: '940020976752-ee8dupcuupmhepgsu70dcvsou7vs3rpi.apps.googleusercontent.com',
     clientSecret: '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',
-    redirectUri: 'https://fdms-kmit.vercel.app/auth/google/callback'
+    redirectUri: 'https://rtrp1.vercel.app/auth/google/callback'
 });
 
 // ... existing code ...
