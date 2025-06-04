@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FDMS Assistant</title>
+    <style>
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ccc;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            margin-right: 5px;
+        }
+        button {
+            padding: 8px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your question...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+        const socket = io('http://localhost:4009', {
+    transports: ['websocket'], // Force WebSocket transport
+    reconnectionAttempts: 3
+  });
+  socket.on('connect', () => console.log('Connected to server!'));
+  socket.on('connect_error', (err) => console.log('Connection error:', err));
+        
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (message) {
+                appendMessage('user', message);
+                socket.emit('chat message', message);
+                input.value = '';
+            }
+        }
+
+        function appendMessage(sender, text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const msgElement = document.createElement('div');
+            msgElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            messagesDiv.appendChild(msgElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        socket.on('bot response', (response) => {
+            appendMessage('bot', response);
+        });
+    </script>
+</body>
+</html>

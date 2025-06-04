@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Reports</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.3rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(50px);
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            margin-right: auto;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding-right: 2rem;
+        }
+
+        .navbar a {
+            font-size: 1.15rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00abf0;
+        }
+
+        .navbar a.active {
+            background: #2575fc;
+            color: white;
+        }
+
+        .main-content {
+            margin-top: 100px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #1e90ee,#48daea);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .faculty-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2575fc;
+        }
+
+        .view-more-btn, .download-btn {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .view-more-btn:hover, .download-btn:hover {
+            background: #1957b8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .value {
+            color: #333;
+        }
+
+        .faculty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .faculty-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .faculty-basic-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .faculty-basic-info h3 {
+            color: #2575fc;
+            margin: 10px 0;
+        }
+
+        .view-more-btn {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .view-more-btn:hover {
+            background: #1957b8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 80%;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .detail-section h4 {
+            color: #2575fc;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #2575fc;
+            padding-bottom: 5px;
+        }
+
+        .download-btn {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        .search-bar {
+            margin: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .filter-btn {
+            padding: 5px 15px;
+            border: 1px solid #2575fc;
+            border-radius: 20px;
+            background: white;
+            color: #2575fc;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #2575fc;
+            color: white;
+        }
+
+        /* View Toggle Styles */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        /* Table View Styles */
+        .table-view {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2575fc;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .grid-view {
+            display: grid;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-buttons button {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .view-btn { background: #4CAF50; color: white; }
+        .edit-btn { background: #2196F3; color: white; }
+        .delete-btn { background: #f44336; color: white; }
+
+        .view-btn:hover { background: #45a049; }
+        .edit-btn:hover { background: #1976D2; }
+        .delete-btn:hover { background: #d32f2f; }
+
+        .details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .details-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .info-group {
+            margin-bottom: 10px;
+        }
+
+        .info-group label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .edit-mode {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .filter-divider {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0 10px;
+        }
+
+        .button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Increased gap between buttons */
+            z-index: 1001;
+        }
+
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 150px;
+        }
+
+        .excel-btn {
+            background: #217346; /* Excel green color */
+            margin-top: 40px; /* Additional margin for more spacing */
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">TATHYA</a>
+        <nav class="navbar">
+            <a href="/admin_dashboard">Dashboard</a>
+            <a href="/manage-users">Manage Users</a>
+            <a href="/reports" class="active">Reports</a>
+            <a href="/notifications">Notifications</a>
+            <i class='bx bx-moon' id="theme-toggle"></i>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <div class="button-container" style="position: fixed; top: 20px; right: 20px;">
+            <button class="download-btn" onclick="downloadReport()">Download Report</button>
+            <button class="download-btn excel-btn" onclick="downloadExcel()">Download Excel</button>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by name or department..." onkeyup="filterFaculty()">
+        </div>
+
+        <div class="filter-section">
+            <!-- Add role filter buttons before department filter -->
+            <button class="filter-btn active" onclick="filterByRole('all')">All Roles</button>
+            <button class="filter-btn" onclick="filterByRole('Faculty')">Faculty</button>
+            <button class="filter-btn" onclick="filterByRole('HOD')">HOD</button>
+            
+            <span class="filter-divider">|</span>
+            
+            <button class="filter-btn active" onclick="filterByDepartment('all')">All Depts</button>
+            <button class="filter-btn" onclick="filterByDepartment('CSE')">CSE</button>
+            <button class="filter-btn" onclick="filterByDepartment('DS')">DS</button>
+            <button class="filter-btn" onclick="filterByDepartment('AIML')">AIML</button>
+            <button class="filter-btn" onclick="filterByDepartment('IT')">IT</button>
+        </div>
+
+        <!-- Add View Toggle Buttons -->
+        <div class="view-toggle">
+            <button class="toggle-btn active" onclick="toggleView('grid')">Grid View</button>
+            <button class="toggle-btn" onclick="toggleView('table')">Table View</button>
+        </div>
+
+        <!-- Grid View -->
+        <div class="faculty-grid grid-view" id="facultyGrid">
+            <!-- Faculty cards will be dynamically added here -->
+        </div>
+
+        <!-- Table View -->
+        <div class="table-view" id="facultyTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="facultyTableBody">
+                    <!-- Table rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal" id="detailsModal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <div id="facultyDetails"></div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+                <h3>Confirm Delete</h3>
+                <p>Are you sure you want to delete this faculty member?</p>
+                <div class="action-buttons">
+                    <button onclick="confirmDelete()">Yes, Delete</button>
+                    <button onclick="closeDeleteModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allFacultyData = [];
+        let currentFaculty = null;
+        let facultyToDelete = null;
+
+        async function loadFacultyData() {
+            try {
+                // First get all users who are faculty or HOD
+                const usersResponse = await fetch('http://localhost:4009/api/admin/faculty-details');
+                const allUsers = await usersResponse.json();
+                
+                // Filter for both faculty and HOD users
+                allFacultyData = allUsers.filter(user => {
+                    return (user.role === 'Faculty' || user.role === 'HOD') && 
+                           user.details !== null;
+                }).map(user => ({
+                    personal: {
+                        name: user.name,
+                        email: user.email,
+                        role: user.role, // Include role in personal details
+                        department: user.department,
+                        phone: user.phoneNumber,
+                        ...user.details?.personal
+                    },
+                    education: user.details?.education || {},
+                    experience: user.details?.experience || []
+                }));
+
+                displayFacultyCards(allFacultyData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                const grid = document.getElementById('facultyGrid');
+                grid.innerHTML = '<div class="faculty-card">Failed to load data. Please try again later.</div>';
+            }
+        }
+
+        function displayFacultyCards(facultyList) {
+            const grid = document.getElementById('facultyGrid');
+            const tableBody = document.getElementById('facultyTableBody');
+            
+            grid.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (!facultyList || facultyList.length === 0) {
+                grid.innerHTML = '<div class="faculty-card">No faculty records found.</div>';
+                return;
+            }
+
+            facultyList.forEach(faculty => {
+                // Grid View Card
+                const card = document.createElement('div');
+                card.className = 'faculty-card';
+                card.innerHTML = `
+                    <div class="faculty-basic-info">
+                        <h3>${faculty.personal.name || 'N/A'}</h3>
+                        <p>Email: ${faculty.personal.email || 'N/A'}</p>
+                        <p>Role: ${faculty.personal.role}</p>
+                        <p>Department: ${faculty.personal.department || 'N/A'}</p>
+                        <div class="action-buttons">
+                            <button class="view-btn" onclick="showDetails('${faculty.personal.email}')">
+                                View Details
+                            </button>
+                            <button class="edit-btn" onclick="editFaculty('${faculty.personal.email}')">
+                                Edit
+                            </button>
+                            <button class="delete-btn" onclick="showDeleteModal('${faculty.personal.email}')">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+
+                // Table View Row
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${faculty.personal.name || 'N/A'}</td>
+                    <td>${faculty.personal.email || 'N/A'}</td>
+                    <td>${faculty.personal.department || 'N/A'}</td>
+                    <td>
+                        <button class="view-btn" onclick="showDetails('${faculty.personal.email}')">View</button>
+                        <button class="edit-btn" onclick="editFaculty('${faculty.personal.email}')">Edit</button>
+                        <button class="delete-btn" onclick="showDeleteModal('${faculty.personal.email}')">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function showDetails(email) {
+            const faculty = allFacultyData.find(f => f.personal.email === email);
+            if (!faculty) return;
+
+            currentFaculty = faculty;
+            const modal = document.getElementById('detailsModal');
+            const detailsDiv = document.getElementById('facultyDetails');
+
+            detailsDiv.innerHTML = `
+                <h2>Faculty Profile - ${faculty.personal.name}</h2>
+                
+                <div class="detail-section">
+                    <h4>Personal Information</h4>
+                    <p>Name: ${faculty.personal.name}</p>
+                    <p>Email: ${faculty.personal.email}</p>
+                    <p>Phone: ${faculty.personal.phone}</p>
+                    <p>Gender: ${faculty.personal.gender}</p>
+                    <p>Age: ${faculty.personal.age}</p>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Educational Qualifications</h4>
+                    ${createEducationSection(faculty.education)}
+                </div>
+
+                <div class="detail-section">
+                    <h4>Professional Experience</h4>
+                    ${createExperienceSection(faculty.experience)}
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function createEducationSection(education) {
+            return `
+                <div class="education-details">
+                    ${Object.entries(education).map(([level, details]) => `
+                        <div class="edu-level">
+                            <h5>${level.toUpperCase()}</h5>
+                            <p>Institution: ${details.name || 'N/A'}</p>
+                            <p>Location: ${details.location || 'N/A'}</p>
+                            <p>Duration: ${details.duration || 'N/A'}</p>
+                            ${level === 'phd' ? `
+                                <p>Status: ${details.status || 'N/A'}</p>
+                                <p>Current Year: ${details.currentYear || 'N/A'}</p>
+                            ` : ''}
+                            <p>Grade: ${details.grade || 'N/A'} (${details.gradeType || 'N/A'})</p>
+                        </div>
+                    `).join('<hr>')}
+                </div>
+            `;
+        }
+
+        function createExperienceSection(experience) {
+            if (!experience || experience.length === 0) {
+                return '<p>No experience data available</p>';
+            }
+
+            return experience.map(exp => `
+                <div class="exp-item">
+                    <p>Organization: ${exp.organization}</p>
+                    <p>Designation: ${exp.designation}</p>
+                    <p>Location: ${exp.state}, ${exp.city}</p>
+                    <p>Duration: ${exp.duration}</p>
+                </div>
+            `).join('<hr>');
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        function filterFaculty() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const activeRole = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(btn => btn.onclick.toString().includes('filterByRole') && btn.classList.contains('active'))
+                ?.textContent.replace('All Roles', 'all');
+            const activeDept = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(btn => btn.onclick.toString().includes('filterByDepartment') && btn.classList.contains('active'))
+                ?.textContent.replace('All Depts', 'all');
+
+            const filteredFaculty = allFacultyData.filter(faculty => {
+                const matchesSearch = faculty.personal.name.toLowerCase().includes(searchText) ||
+                                    faculty.personal.department?.toLowerCase().includes(searchText);
+                const matchesRole = activeRole === 'all' || faculty.personal.role === activeRole;
+                const matchesDept = activeDept === 'all' || faculty.personal.department === activeDept;
+                
+                return matchesSearch && matchesRole && matchesDept;
+            });
+
+            displayFilteredFaculty(filteredFaculty);
+        }
+
+        function filterByRole(role) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.onclick.toString().includes('filterByRole')) {
+                    btn.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+
+            const filteredFaculty = role === 'all' 
+                ? allFacultyData 
+                : allFacultyData.filter(faculty => faculty.personal.role === role);
+            
+            displayFilteredFaculty(filteredFaculty);
+        }
+
+        function filterByDepartment(dept) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.onclick.toString().includes('filterByDepartment')) {
+                    btn.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+
+            filterFaculty(); // Use the combined filter function
+        }
+
+        function displayFilteredFaculty(facultyList) {
+            const grid = document.getElementById('facultyGrid');
+            const tableBody = document.getElementById('facultyTableBody');
+            
+            // Clear both views
+            grid.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            facultyList.forEach(faculty => {
+                // Grid View Card
+                const card = document.createElement('div');
+                card.className = 'faculty-card';
+                card.innerHTML = `
+                    <div class="faculty-basic-info">
+                        <h3>${faculty.personal.name}</h3>
+                        <p>${faculty.personal.email}</p>
+                        <p>Department: ${faculty.personal.department || 'N/A'}</p>
+                        <div class="action-buttons">
+                            <button class="view-btn" onclick="showDetails('${faculty.personal.email}')">
+                                View Details
+                            </button>
+                            <button class="edit-btn" onclick="editFaculty('${faculty.personal.email}')">
+                                Edit
+                            </button>
+                            <button class="delete-btn" onclick="showDeleteModal('${faculty.personal.email}')">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+
+                // Table View Row
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${faculty.personal.name}</td>
+                    <td>${faculty.personal.email}</td>
+                    <td>${faculty.personal.department || 'N/A'}</td>
+                    <td>
+                        <button class="view-btn" onclick="showDetails('${faculty.personal.email}')">
+                            View Details
+                        </button>
+                        <button class="edit-btn" onclick="editFaculty('${faculty.personal.email}')">
+                            Edit
+                        </button>
+                        <button class="delete-btn" onclick="showDeleteModal('${faculty.personal.email}')">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function toggleView(view) {
+            const gridView = document.getElementById('facultyGrid');
+            const tableView = document.getElementById('facultyTable');
+            const buttons = document.querySelectorAll('.toggle-btn');
+
+            if (view === 'grid') {
+                gridView.style.display = 'grid';
+                tableView.style.display = 'none';
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                gridView.style.display = 'none';
+                tableView.style.display = 'block';
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        function downloadReport() {
+            if (!currentFaculty) return;
+
+            const faculty = currentFaculty;
+            const content = `
+Faculty Report
+
+Personal Information
+-------------------
+Name: ${faculty.personal.name}
+Email: ${faculty.personal.email}
+Phone: ${faculty.personal.phone}
+Gender: ${faculty.personal.gender}
+Age: ${faculty.personal.age}
+
+Educational Information
+---------------------
+${Object.entries(faculty.education).map(([level, details]) => `
+${level.toUpperCase()}
+Institution: ${details.name || 'N/A'}
+Location: ${details.location || 'N/A'}
+Duration: ${details.duration || 'N/A'}
+Grade: ${details.grade || 'N/A'} (${details.gradeType || 'N/A'})
+`).join('\n')}
+
+Professional Experience
+---------------------
+${faculty.experience ? faculty.experience.map(exp => `
+Organization: ${exp.organization}
+Designation: ${exp.designation}
+Location: ${exp.state}, ${exp.city}
+Duration: ${exp.duration}
+`).join('\n') : 'No experience data available'}
+            `;
+
+            const blob = new Blob([content], { type: 'application/msword' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${faculty.personal.name}_report.doc`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function displayFacultyDetails(data) {
+            const detailsDiv = document.getElementById('facultyDetails');
+            detailsDiv.style.display = 'block';
+            
+            detailsDiv.innerHTML = `
+                <h2>Personal Information</h2>
+                <div class="section">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="label">Name</div>
+                            <div class="value">${data.personal.name || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Department</div>
+                            <div class="value">${data.personal.department || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Email</div>
+                            <div class="value">${data.personal.email || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Phone</div>
+                            <div class="value">${data.personal.phone || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+                // ...rest of the template remains the same...
+            `;
+        }
+
+        // ... existing code ...
+
+// async function editFaculty(email) {
+//     try {
+//         // Store email for editing
+//         localStorage.setItem('editFacultyEmail', email);
+        
+//         // Fetch faculty details
+//         const response = await fetch(`http://localhost:4009/api/faculty/details/byEmail/${email}`);
+//         const data = await response.json();
+
+//         if (data.success) {
+//             // Store the faculty data temporarily
+//             sessionStorage.setItem('editFacultyData', JSON.stringify(data.data));
+            
+//             // Redirect to faculty_profile with edit mode
+//             window.location.href = `/faculty_profile?mode=edit&email=${email}`;
+//         } else {
+//             throw new Error(data.message);
+//         }
+//     } catch (error) {
+//         console.error('Error:', error);
+//         alert('Failed to load faculty details for editing');
+//     }
+// }
+
+// // ... existing code ...
+// http://localhost:4009/faculty_profile?mode=edit&email=phanindra@gmail.com  not able to edit.
+//         function showDeleteModal(email) {
+//             facultyToDelete = email;
+//             document.getElementById('deleteModal').style.display = 'block';
+//         }
+
+//         function closeDeleteModal() {
+//             document.getElementById('deleteModal').style.display = 'none';
+//             facultyToDelete = null;
+//         }
+
+//         async function confirmDelete() {
+//             if (!facultyToDelete) return;
+
+//             try {
+//                 const response = await fetch(`http://localhost:4009/api/faculty/delete/${facultyToDelete}`, {
+//                     method: 'DELETE'
+//                 });
+//                 const data = await response.json();
+
+//                 if (data.success) {
+//                     alert('Faculty deleted successfully');
+//                     closeDeleteModal();
+//                     // Reload faculty data
+//                     await loadFacultyData();
+//                 } else {
+//                     throw new Error(data.message);
+//                 }
+//             } catch (error) {
+//                 console.error('Error:', error);
+//                 alert('Failed to delete faculty: ' + error.message);
+//             }
+//         }
+
+async function editFaculty(email) {
+    try {
+        // Find the faculty data from our existing allFacultyData array
+        const facultyData = allFacultyData.find(faculty => faculty.personal.email === email);
+        
+        if (facultyData) {
+            // Store the faculty data in sessionStorage
+            sessionStorage.setItem('editFacultyData', JSON.stringify(facultyData));
+            
+            // Use the complete URL with http://localhost:4009 and remove mode parameter
+            window.location.href = 'http://localhost:4009/faculty_profile';
+        } else {
+            throw new Error('Faculty data not found');
+        }
+    } catch (error) {
+        console.error('Error preparing faculty edit:', error);
+        alert('Failed to load faculty details for editing: ' + error.message);
+    }
+}
+
+
+
+        async function viewDetails(email) {
+            try {
+                const response = await fetch(`http://localhost:4009/api/faculty/details/byEmail/${email}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const details = data.data;
+                    const detailsHtml = `
+                        <div class="details-modal">
+                            <div class="details-content">
+                                <h3>Faculty Details</h3>
+                                
+                                <div class="section">
+                                    <h4>Personal Information</h4>
+                                    <div class="info-group">
+                                        <label>Name:</label>
+                                        <span class="view-mode">${details.personal.name || ''}</span>
+                                        <input type="text" class="edit-mode" value="${details.personal.name || ''}" style="display:none">
+                                    </div>
+                                    <div class="info-group">
+                                        <label>Email:</label>
+                                        <span class="view-mode">${details.personal.email || ''}</span>
+                                        <input type="email" class="edit-mode" value="${details.personal.email || ''}" style="display:none" readonly>
+                                    </div>
+                                    <!-- Add more personal fields similarly -->
+                                </div>
+
+                                <div class="section">
+                                    <h4>Educational Details</h4>
+                                    <!-- Similar structure for education details -->
+                                    ${generateEducationHtml(details.education)}
+                                </div>
+
+                                <div class="section">
+                                    <h4>Experience</h4>
+                                    ${generateExperienceHtml(details.experience)}
+                                </div>
+
+                                <div class="button-group">
+                                    <button onclick="toggleEditMode(this)" class="edit-btn">Edit</button>
+                                    <button onclick="saveChanges('${email}')" class="save-btn" style="display:none">Save Changes</button>
+                                    <button onclick="closeDetailsModal()" class="close-btn">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Insert modal HTML into document
+                    const modalContainer = document.createElement('div');
+                    modalContainer.innerHTML = detailsHtml;
+                    document.body.appendChild(modalContainer);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load faculty details');
+            }
+        }
+
+        function generateEducationHtml(education) {
+            return `
+                <div class="education-section">
+                    ${Object.entries(education).map(([level, details]) => `
+                        <div class="edu-level">
+                            <h5>${level.toUpperCase()}</h5>
+                            <div class="info-group">
+                                <label>Institution:</label>
+                                <span class="view-mode">${details.name || ''}</span>
+                                <input type="text" class="edit-mode" value="${details.name || ''}" style="display:none">
+                            </div>
+                            <!-- Add other education fields similarly -->
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function generateExperienceHtml(experiences) {
+            if (!experiences || experiences.length === 0) return '<p>No experience data available</p>';
+            
+            return experiences.map((exp, index) => `
+                <div class="experience-item">
+                    <div class="info-group">
+                        <label>Organization:</label>
+                        <span class="view-mode">${exp.organization || ''}</span>
+                        <input type="text" class="edit-mode" value="${exp.organization || ''}" style="display:none">
+                    </div>
+                    <!-- Add other experience fields similarly -->
+                </div>
+            `).join('');
+        }
+
+        function toggleEditMode(button) {
+            const modal = button.closest('.details-modal');
+            const isEditing = button.textContent === 'Cancel';
+
+            // Toggle button states
+            button.textContent = isEditing ? 'Edit' : 'Cancel';
+            modal.querySelector('.save-btn').style.display = isEditing ? 'none' : 'inline-block';
+
+            // Toggle input fields
+            modal.querySelectorAll('.view-mode').forEach(span => {
+                span.style.display = isEditing ? 'inline' : 'none';
+            });
+            modal.querySelectorAll('.edit-mode').forEach(input => {
+                input.style.display = isEditing ? 'none' : 'inline-block';
+            });
+        }
+
+        async function saveChanges(email) {
+            try {
+                const modal = document.querySelector('.details-modal');
+                const updatedData = {
+                    personalDetails: collectModalData(modal, 'personal'),
+                    educationDetails: collectModalData(modal, 'education'),
+                    experiences: collectModalData(modal, 'experience')
+                };
+
+                const response = await fetch('http://localhost:4009/api/faculty/details/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        updates: updatedData
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Changes saved successfully!');
+                    // Refresh the view
+                    closeDetailsModal();
+                    viewDetails(email);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                alert('Failed to save changes: ' + error.message);
+            }
+        }
+
+        function collectModalData(modal, section) {
+            const data = {};
+            modal.querySelectorAll(`.${section}-section .edit-mode`).forEach(input => {
+                const field = input.getAttribute('data-field');
+                data[field] = input.value;
+            });
+            return data;
+        }
+
+        function closeDetailsModal() {
+            const modal = document.querySelector('.details-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function downloadExcel() {
+            try {
+                // Get the currently filtered/displayed data instead of fetching all data
+                const filteredFaculty = getCurrentlyFilteredFaculty();
+                
+                // Format the filtered data for Excel
+                const excelData = filteredFaculty.map(user => ({
+                    'Name': user.personal?.name || 'N/A',
+                    'Role': user.personal?.role || 'N/A',
+                    'Email': user.personal?.email || 'N/A',
+                    'Department': user.personal?.department || 'N/A',
+                    'Phone': user.personal?.phone || 'N/A',
+                    'Gender': user.personal?.gender || 'N/A',
+                    'Age': user.personal?.age || 'N/A',
+                    // Educational Details
+                    'School Name': user.education?.school?.name || 'N/A',
+                    'School Grade': user.education?.school?.grade || 'N/A',
+                    'Intermediate College': user.education?.intermediate?.name || 'N/A',
+                    'Intermediate Grade': user.education?.intermediate?.grade || 'N/A',
+                    'UG College': user.education?.ug?.name || 'N/A',
+                    'UG Course': user.education?.ug?.course || 'N/A',
+                    'UG Specialization': user.education?.ug?.specialization || 'N/A',
+                    'UG Grade': user.education?.ug?.grade || 'N/A',
+                    'PG College': user.education?.pg?.name || 'N/A',
+                    'PG Course': user.education?.pg?.course || 'N/A',
+                    'PG Specialization': user.education?.pg?.specialization || 'N/A',
+                    'PG Grade': user.education?.pg?.grade || 'N/A',
+                    'PhD Status': user.education?.phd?.status || 'N/A',
+                    'PhD College': user.education?.phd?.name || 'N/A',
+                    'PhD Course': user.education?.phd?.course || 'N/A',
+                    // Experience Details
+                    'Current Organization': user.experience?.[0]?.organization || 'N/A',
+                    'Current Designation': user.experience?.[0]?.designation || 'N/A',
+                    'Experience Duration': user.experience?.[0]?.duration || 'N/A'
+                }));
+
+                // Convert to worksheet
+                const worksheet = XLSX.utils.json_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Faculty Data");
+
+                // Generate Excel file with appropriate name based on filters
+                const fileName = getExcelFileName();
+                XLSX.writeFile(workbook, fileName);
+            } catch (error) {
+                console.error('Error downloading Excel:', error);
+                alert('Failed to download Excel file');
+            }
+        }
+
+        function getCurrentlyFilteredFaculty() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const activeRole = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(btn => btn.onclick.toString().includes('filterByRole') && btn.classList.contains('active'))
+                ?.textContent.replace('All Roles', 'all');
+            const activeDept = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(btn => btn.onclick.toString().includes('filterByDepartment') && btn.classList.contains('active'))
+                ?.textContent.replace('All Depts', 'all');
+
+            return allFacultyData.filter(faculty => {
+                const matchesSearch = !searchText || 
+                    faculty.personal.name.toLowerCase().includes(searchText) ||
+                    faculty.personal.department?.toLowerCase().includes(searchText);
+                const matchesRole = activeRole === 'all' || faculty.personal.role === activeRole;
+                const matchesDept = activeDept === 'all' || faculty.personal.department === activeDept;
+                
+                return matchesSearch && matchesRole && matchesDept;
+            });
+        }
+
+        function getExcelFileName() {
+            const activeRole = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(btn => btn.onclick.toString().includes('filterByRole') && btn.classList.contains('active'))
+                ?.textContent.replace('All Roles', 'all');
+            const activeDept = Array.from(document.querySelectorAll('.filter-btn'))
+                .find(btn => btn.onclick.toString().includes('filterByDepartment') && btn.classList.contains('active'))
+                ?.textContent.replace('All Depts', 'all');
+
+            let fileName = "faculty_details";
+            if (activeRole !== 'all') fileName += `_${activeRole}`;
+            if (activeDept !== 'all') fileName += `_${activeDept}`;
+            fileName += ".xlsx";
+
+            return fileName;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFacultyData);
+    </script>
+
+    <!-- Add XLSX library -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+</body>
+</html>
+``` 

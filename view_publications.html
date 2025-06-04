@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Research Publications</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #1e90ee, #48daea);
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.3rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(50px);
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            margin-right: auto;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding-right: 2rem;
+        }
+
+        .navbar a {
+            font-size: 1.15rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00abf0;
+        }
+
+        .navbar a.active {
+            background: #2575fc;
+            color: white;
+        }
+
+        .settings-container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .publication-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+            margin-top: 10%;
+        }
+
+        .publication-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .view-doc-btn {
+            background: #2196F3;
+            color: rgb(255, 255, 255);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-doc-btn:hover {
+            background: #1976D2;
+        }
+
+        .no-publications {
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">TATHYA</a>
+        <nav class="navbar">
+            <a href="/admin_dashboard">Dashboard</a>
+            <a href="/manage_users">Manage Users</a>
+            <a href="/reports">Reports</a>
+            <a href="/view_publications" class="active">View Researches</a>
+            <a href="/notifications">Notifications</a>
+            <i class='bx bx-moon' id="theme-toggle"></i>
+        </nav>
+    </header>
+    <div class="chart-container" style="width: 60%; margin-left:20% ; margin-top: 50px;height: 400px;">
+        <canvas id="publicationsBarChart"></canvas>
+    </div>
+
+    <div class="settings-container">
+        <h2>Research & Publications</h2>
+        <div class="filters">
+            <select id="typeFilter" class="filter-select">
+                <option value="">All Types</option>
+                <option value="journal">Journal Papers</option>
+                <option value="conference">Conference Papers</option>
+                <option value="book">Book Chapters</option>
+                <option value="patent">Patents</option>
+            </select>
+        </div>
+        <div id="publicationsList">
+            <!-- Publications will be loaded here -->
+        </div>
+        
+    </div>
+    
+    <script>
+        async function loadPublications() {
+            try {
+                const type = document.getElementById('typeFilter').value; // Get filter value
+                console.log('Fetching publications with type:', type);
+    
+                const response = await fetch(`http://localhost:4009/api/research`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                console.log('Received publications:', data);
+    
+                const container = document.getElementById('publicationsList');
+                if (data.success && data.publications.length > 0) {
+                    // Filter publications if type is selected
+                    let filteredPubs = data.publications;
+                    if (type) {
+                        filteredPubs = data.publications.filter(pub => pub.type === type);
+                    }
+    
+                    container.innerHTML = filteredPubs.map(pub => `
+                        <div class="publication-card">
+                            <h3>${pub.title}</h3>
+                            <p><strong>Authors:</strong> ${pub.authors}</p>
+                            <p><strong>Type:</strong> ${pub.type}</p>
+                            <p><strong>Published in:</strong> ${pub.publication}</p>
+                            <p><strong>Date:</strong> ${new Date(pub.date).toLocaleDateString()}</p>
+                            ${pub.abstract ? `<p><strong>Abstract:</strong> ${pub.abstract}</p>` : ''}
+                            ${pub.documentPath ? `
+                                <button class="view-doc-btn" onclick="viewDocument('${pub.documentPath}')">
+                                    View Document
+                                </button>
+                            ` : '<p>No document available</p>'}
+                        </div>
+                    `).join('');
+    
+                    // Add publication count
+                    const countDiv = document.createElement('div');
+                    countDiv.className = 'publication-count';
+                    countDiv.textContent = `Total Publications: ${filteredPubs.length}`;
+                    container.prepend(countDiv);
+                } else {
+                    container.innerHTML = '<p class="no-publications">No publications found</p>';
+                }
+            } catch (error) {
+                console.error('Error loading publications:', error);
+                document.getElementById('publicationsList').innerHTML = 
+                    `<p class="no-publications">Error loading publications: ${error.message}</p>`;
+            }
+        }
+    
+        // Add filter change event listener
+        document.getElementById('typeFilter').addEventListener('change', loadPublications);
+    
+        // Load publications when page loads
+        document.addEventListener('DOMContentLoaded', loadPublications);
+        function viewDocument(filename) {
+    if (!filename) {
+        alert('Document not available');
+        return;
+    }
+    const url = `http://localhost:4009/uploads/research/${filename}`;
+    window.open(url, '_blank');
+}
+
+
+
+
+    async function loadPublicationCounts() {
+        try {
+            const response = await fetch('http://localhost:4009/api/research');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.success && data.publications.length > 0) {
+                // Process data to count publications by year
+                const publicationCounts = {2023:0, 2024: 0, 2025: 0 };
+                data.publications.forEach(pub => {
+                    const year = new Date(pub.date).getFullYear();
+                    if (publicationCounts[year] !== undefined) {
+                        publicationCounts[year]++;
+                    }
+                });
+
+                // Render the bar graph
+                renderBarGraph(publicationCounts);
+            } else {
+                console.error('No publications found');
+            }
+        } catch (error) {
+            console.error('Error loading publication counts:', error);
+        }
+    }
+
+    function renderBarGraph(publicationCounts) {
+        const ctx = document.getElementById('publicationsBarChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [2023,'2024', '2025'], // Years
+                datasets: [{
+                    label: 'Publications Count',
+                    data: [publicationCounts[2023],publicationCounts[2024], publicationCounts[2025]], // Counts for each year
+                    backgroundColor: ['#008000', '#008000','#008000'], // Bar colors
+                    borderColor: ['#1e90ee', '#48daea'], // Border colors
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Publications'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Load publication counts and render the graph when the page loads
+    document.addEventListener('DOMContentLoaded', loadPublicationCounts);
+
+    </script>
+    
+    <style>
+        // Add these new styles to your existing styles
+        .filters {
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+    
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background: rgba(11, 159, 233, 0.959);
+            color: white;
+            cursor: pointer;
+        }
+    
+        .publication-count {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 5px;
+            backdrop-filter: blur(10px);
+        }
+    
+        .publication-card {
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+    </style>
+</body>
+</html>

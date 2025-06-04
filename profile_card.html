@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Card</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --background-color: #ecf0f1;
+        --text-color: #2c3e50;
+        --success-color: #27ae60;
+        --error-color: #c0392b;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+    h1, h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        text-align: center;
+        border-bottom: 3px solid var(--secondary-color);
+        padding-bottom: 1rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        color: var(--secondary-color);
+        position: relative;
+        padding-left: 20px;
+    }
+
+    h2::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 70%;
+        background-color: var(--secondary-color);
+        border-radius: 4px;
+    }
+
+    .section {
+        margin-bottom: 2.5rem;
+        padding: 1.5rem;
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .education-entry {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--secondary-color);
+        transition: transform 0.2s ease;
+    }
+
+    .education-entry:hover {
+        transform: translateX(5px);
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus, select:focus {
+        border-color: var(--secondary-color);
+        outline: none;
+        box-shadow: 0 0 8px rgba(52,152,219,0.2);
+    }
+
+    button {
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(41,128,185,0.3);
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 6px;
+        margin: 1rem 0;
+        text-align: center;
+    }
+
+    .success {
+        background-color: #d4edda;
+        color: var(--success-color);
+        border: 1px solid #c3e6cb;
+    }
+
+    .error {
+        background-color: #f8d7da;
+        color: var(--error-color);
+        border: 1px solid #f5c6cb;
+    }
+
+    #research-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+    }
+
+    #research-table th,
+    #research-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #research-table th {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .experience-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .delete-btn {
+        background-color: var(--accent-color);
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+            margin: 10px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+        }
+
+        .section {
+            padding: 1rem;
+        }
+
+        input, select {
+            font-size: 14px;
+            padding: 10px;
+        }
+    }
+
+    .checkbox-group {
+        display: flex;
+        gap: 15px;
+        margin: 1rem 0;
+    }
+
+    .checkbox-group label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .file-input {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 6px;
+        border: 2px dashed #ddd;
+    }
+
+    .file-input:hover {
+        border-color: var(--secondary-color);
+    }
+
+    #add-experience-btn {
+        background-color: var(--success-color);
+        margin-bottom: 1.5rem;
+    }
+
+    #phd-details {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Personal Details Section -->
+    <div class="section" id="personal">
+      <h2>Personal Details</h2>
+      <div class="details">
+        <label>Name:</label>
+        <input type="text" id="name" placeholder="Enter your name">
+        <label>Age:</label>
+        <input type="number" id="age" placeholder="Enter your age">
+        <label>Gender:</label>
+        <select id="gender">
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <label>Date of Birth:</label>
+        <input type="date" id="dob">
+        <label>Aadhar Number:</label>
+        <input type="text" id="aadhar" placeholder="Enter Aadhar Number">
+        <label>PAN Number:</label>
+        <input type="text" id="pan" placeholder="Enter PAN Number">
+        <label>Email:</label>
+        <input type="email" id="email" placeholder="Enter your email">
+        <label>Phone Number:</label>
+        <input type="tel" id="phone" placeholder="Enter your phone number">
+        <label>Temporary Address:</label>
+        <input type="text" id="temp-address" placeholder="Enter temporary address">
+        <label>
+          
+          <input type="checkbox" id="same-as-temp"> same as temporary
+        </label>
+       
+        <label>Permanent Address:</label>
+        <input type="text" id="perm-address" placeholder="Enter permanent address">
+      </div>
+    </div>
+
+    <!-- Educational Qualifications Section -->
+    <div class="section">
+      <h2>Educational Qualifications</h2>
+      <div class="education-entry">
+        <h3>10th</h3>
+        <label>Name of Institution:</label>
+        <input type="text" id="tenth-institution" placeholder="Enter institution name">
+        <label>Duration of Study:</label>
+        <input type="text" id="tenth-duration" placeholder="Enter duration (e.g., 2008 - 2010)">
+        <label>Location of Institution:</label>
+        <input type="text" id="tenth-location" placeholder="Enter location">
+        <label>Grade Obtained:</label>
+        <input type="text" id="tenth-grade" placeholder="Enter grade">
+        <label>Upload Certificate:</label>
+        <input type="file" id="tenth-certificate" name="tenthCertificate" accept=".pdf,.jpg,.png">
+      </div>
+
+      <!-- Inter Section -->
+      <div class="education-entry">
+        <h3>Inter</h3>
+        <label>Name of Institution:</label>
+        <input type="text" id="inter-institution" placeholder="Enter institution name">
+        <label>Duration of Study:</label>
+        <input type="text" id="inter-duration" placeholder="Enter duration (e.g., 2010 - 2012)">
+        <label>Location of Institution:</label>
+        <input type="text" id="inter-location" placeholder="Enter location">
+        <label>Grade Obtained:</label>
+        <input type="text" id="inter-grade" placeholder="Enter grade">
+        <label>Upload Certificate:</label>
+        <input type="file" id="inter-certificate" name="interCertificate" accept=".pdf,.jpg,.png">
+      </div>
+
+      <!-- Undergraduate Section -->
+      <div class="education-entry">
+        <h3>Undergraduate</h3>
+        <label>Name of Institution:</label>
+        <input type="text" id="ug-institution" placeholder="Enter institution name">
+        <label>Duration of Study:</label>
+        <input type="text" id="ug-duration" placeholder="Enter duration (e.g., 2012 - 2016)">
+        <label>Location of Institution:</label>
+        <input type="text" id="ug-location" placeholder="Enter location">
+        <label>Grade Obtained:</label>
+        <input type="text" id="ug-grade" placeholder="Enter grade">
+        <label>Upload Certificate:</label>
+        <input type="file" id="ug-certificate" name="ugCertificate" accept=".pdf,.jpg,.png">
+      </div>
+
+      <!-- Postgraduate Section -->
+      <div class="education-entry">
+        <h3>Postgraduate</h3>
+        <label>Name of Institution:</label>
+        <input type="text" id="pg-institution" placeholder="Enter institution name">
+        <label>Duration of Study:</label>
+        <input type="text" id="pg-duration" placeholder="Enter duration (e.g., 2016 - 2018)">
+        <label>Location of Institution:</label>
+        <input type="text" id="pg-location" placeholder="Enter location">
+        <label>Grade Obtained:</label>
+        <input type="text" id="pg-grade" placeholder="Enter grade">
+        <label>Upload Certificate:</label>
+        <input type="file" id="pg-certificate" name="pgCertificate" accept=".pdf,.jpg,.png">
+      </div>
+
+      <!-- PhD Section -->
+      <div class="education-entry">
+        <h3>PhD</h3>
+        <p><strong>Does PhD include in your education?</strong></p>
+        <label>
+          <input type="radio" name="phd-included" value="yes" id="phd-yes"> Yes
+        </label>
+        <label>
+          <input type="radio" name="phd-included" value="no" id="phd-no"> No
+        </label>
+
+        <div id="phd-details" style="display: none; margin-top: 15px;">
+          <p><strong>Are you pursuing or completed?</strong></p>
+          <label>
+            <input type="radio" name="phd-status" value="pursuing" id="phd-pursuing"> Pursuing
+          </label>
+          <label>
+            <input type="radio" name="phd-status" value="completed" id="phd-completed"> Completed
+          </label>
+
+          <!-- Pursuing PhD Section -->
+          <div id="phd-pursuing-fields" style="display: none; margin-top: 15px;">
+            <label>Institution Name:</label>
+            <input type="text" id="phd-pursuing-institution" placeholder="Enter institution name">
+            <label>From:</label>
+            <input type="date" id="phd-pursuing-from">
+            <label>To:</label>
+            <input type="date" id="phd-pursuing-to">
+            <label>Location:</label>
+            <input type="text" id="phd-pursuing-location" placeholder="Enter location">
+            <label>Grade:</label>
+            <input type="text" id="phd-pursuing-grade" placeholder="Enter grade">
+          </div>
+
+          <!-- Completed PhD Section -->
+          <div id="phd-completed-fields" style="display: none; margin-top: 15px;">
+            <label>Institution Name:</label>
+            <input type="text" id="phd-completed-institution" placeholder="Enter institution name">
+            <label>From:</label>
+            <input type="date" id="phd-completed-from">
+            <label>To:</label>
+            <input type="date" id="phd-completed-to">
+            <label>Location:</label>
+            <input type="text" id="phd-completed-location" placeholder="Enter location">
+            <label>Grade:</label>
+            <input type="text" id="phd-completed-grade" placeholder="Enter grade">
+
+            <!-- Research Table -->
+            <p><strong>Research/Publication Details:</strong></p>
+            <table id="research-table" ;border="1" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <button id="add-research-row" style="margin-top: 10px;">Add Research/Publication</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Experience Section -->
+    <div class="section">
+      <h2>Professional Experience</h2>
+      <button id="add-experience-btn" style="margin-bottom: 15px;">Add Experience</button>
+      <div id="experience-container"></div>
+      <div class="form-group">
+        <label for="certificate">Upload Certificate:</label>
+        <input type="file" id="certificate" name="certificate" accept=".pdf,.jpg,.png" required>
+    </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="section">
+      <button id="submit-btn">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:9002/profile";
+
+    // Fetch all profiles and display them
+    async function fetchAllProfiles() {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("Failed to fetch profiles");
+
+        const profiles = await response.json();
+        const container = document.getElementById("profiles-container");
+        container.innerHTML = ""; // Clear existing profiles
+
+        profiles.forEach(profile => {
+          const profileCard = document.createElement("div");
+          profileCard.classList.add("profile-card");
+          profileCard.innerHTML = `
+            <h3>${profile.personalDetails.name}</h3>
+            <p><strong>Age:</strong> ${profile.personalDetails.age}</p>
+            <p><strong>Email:</strong> ${profile.personalDetails.email}</p>
+            <button onclick="viewProfile('${profile._id}')">View</button>
+            <button onclick="deleteProfile('${profile._id}')">Delete</button>
+          `;
+          container.appendChild(profileCard);
+        });
+      } catch (error) {
+        console.error("Error fetching profiles:", error);
+      }
+    }
+
+    // View a single profile
+    async function viewProfile(id) {
+      window.location.href = `/pro?id=${id}`;
+    }
+
+    // Delete a profile
+    async function deleteProfile(id) {
+      try {
+        const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        const result = await response.json();
+        alert(result.message);
+        fetchAllProfiles(); // Refresh the list
+      } catch (error) {
+        console.error("Error deleting profile:", error);
+      }
+    }
+
+    // Save a new profile
+    document.getElementById("submit-btn").addEventListener("click", async () => {
+      // Validate Personal Details
+      const personalDetails = {
+        name: document.getElementById("name").value.trim(),
+        age: document.getElementById("age").value.trim(),
+        gender: document.getElementById("gender").value.trim(),
+        dob: document.getElementById("dob").value.trim(),
+        aadhar: document.getElementById("aadhar").value.trim(),
+        pan: document.getElementById("pan").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        tempAddress: document.getElementById("temp-address").value.trim(),
+        permAddress: document.getElementById("perm-address").value.trim(),
+      };
+
+      if (Object.values(personalDetails).some((field) => !field)) {
+        alert("Please fill all personal details.");
+        return;
+      }
+
+      // Validate Education Details
+      const education = [
+        {
+          level: "10th",
+          institution: document.getElementById("tenth-institution").value.trim(),
+          duration: document.getElementById("tenth-duration").value.trim(),
+          location: document.getElementById("tenth-location").value.trim(),
+          grade: document.getElementById("tenth-grade").value.trim(),
+        },
+        {
+          level: "Inter",
+          institution: document.getElementById("inter-institution").value.trim(),
+          duration: document.getElementById("inter-duration").value.trim(),
+          location: document.getElementById("inter-location").value.trim(),
+          grade: document.getElementById("inter-grade").value.trim(),
+        },
+        {
+          level: "UG",
+          institution: document.getElementById("ug-institution").value.trim(),
+          duration: document.getElementById("ug-duration").value.trim(),
+          location: document.getElementById("ug-location").value.trim(),
+          grade: document.getElementById("ug-grade").value.trim(),
+        },
+        {
+          level: "PG",
+          institution: document.getElementById("pg-institution").value.trim(),
+          duration: document.getElementById("pg-duration").value.trim(),
+          location: document.getElementById("pg-location").value.trim(),
+          grade: document.getElementById("pg-grade").value.trim(),
+        },
+      ];
+
+      if (education.some((e) => Object.values(e).some((field) => !field))) {
+        alert("Please fill all education details.");
+        return;
+      }
+
+      // Validate Professional Experience
+      const professionalExperience = [];
+      const experienceCards = document.querySelectorAll("#experience-container .experience-card");
+      if (experienceCards.length === 0) {
+        alert("Please add at least one professional experience.");
+        return;
+      }
+
+      for (const card of experienceCards) {
+        const organization = card.querySelector(".experience-organization").value.trim();
+        const joiningDate = card.querySelector(".experience-joining-date").value.trim();
+        const relieveDate = card.querySelector(".experience-relieve-date").value.trim();
+        const location = card.querySelector(".experience-location").value.trim();
+
+        if (!organization || !joiningDate || !relieveDate || !location) {
+          alert("Please fill all fields in professional experience.");
+          return;
+        }
+
+        professionalExperience.push({
+          organization,
+          joiningDate,
+          relieveDate,
+          location,
+          experienceYears: Math.floor(
+            (new Date(relieveDate) - new Date(joiningDate)) / (1000 * 60 * 60 * 24 * 365)
+          ),
+        });
+      }
+
+      // Prepare data for backend
+      const formData = new FormData();
+      formData.append("data", JSON.stringify({ personalDetails, education, professionalExperience }));
+
+      // Append certificate files to form data
+      const certificateInputs = [
+        { id: "certificate", name: "certificate" },
+        { id: "tenth-certificate", name: "tenthCertificate" },
+        { id: "inter-certificate", name: "interCertificate" },
+        { id: "ug-certificate", name: "ugCertificate" },
+        { id: "pg-certificate", name: "pgCertificate" },
+      ];
+
+      certificateInputs.forEach(input => {
+        const fileInput = document.getElementById(input.id);
+        if (fileInput.files.length > 0) {
+          formData.append(input.name, fileInput.files[0]);
+        }
+      });
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert(result.message);
+          window.location.href = "/pro"; // Redirect to pro.html
+        } else {
+          alert("Failed to save profile: " + result.message);
+        }
+      } catch (error) {
+        console.error("Error saving profile:", error);
+        alert("Failed to save profile");
+      }
+    });
+
+    document.getElementById("phd-yes").addEventListener("click", () => {
+      document.getElementById("phd-details").style.display = "block";
+    });
+
+    document.getElementById("phd-no").addEventListener("click", () => {
+      document.getElementById("phd-details").style.display = "none";
+      document.getElementById("phd-pursuing-fields").style.display = "none";
+      document.getElementById("phd-completed-fields").style.display = "none";
+    });
+
+    document.getElementById("phd-pursuing").addEventListener("click", () => {
+      document.getElementById("phd-pursuing-fields").style.display = "block";
+      document.getElementById("phd-completed-fields").style.display = "none";
+    });
+
+    document.getElementById("phd-completed").addEventListener("click", () => {
+      document.getElementById("phd-pursuing-fields").style.display = "none";
+      document.getElementById("phd-completed-fields").style.display = "block";
+    });
+
+    document.getElementById("add-experience-btn").addEventListener("click", () => {
+      const container = document.getElementById("experience-container");
+
+      const card = document.createElement("div");
+      card.classList.add("experience-card");
+      card.style.border = "1px solid #ddd";
+      card.style.padding = "15px";
+      card.style.marginBottom = "15px";
+      card.style.borderRadius = "5px";
+      card.style.background = "#f9f9f9";
+
+      card.innerHTML = `
+        <label>Name of Organisation/Institution:</label>
+        <input type="text" class="experience-organization" placeholder="Enter organization name"><br><br>
+        <label>Date of Joining:</label>
+        <input type="date" class="experience-joining-date"><br><br>
+        <label>Relieve Date:</label>
+        <input type="date" class="experience-relieve-date"><br><br>
+        <label>Location:</label>
+        <input type="text" class="experience-location" placeholder="Enter location"><br><br>
+        <p><strong>Experience:</strong> <span class="experience-years">0 years</span></p>
+        <button class="save-btn">Save</button>
+        <button class="edit-btn" style="display: none;">Edit</button>
+        <button class="delete-btn">Delete</button>
+      `;
+
+      const joiningDateInput = card.querySelector(".experience-joining-date");
+      const relieveDateInput = card.querySelector(".experience-relieve-date");
+      const experienceYearsSpan = card.querySelector(".experience-years");
+
+      const calculateExperience = () => {
+        const joiningDate = new Date(joiningDateInput.value);
+        const relieveDate = new Date(relieveDateInput.value);
+
+        if (joiningDate && relieveDate && relieveDate > joiningDate) {
+          const diffTime = Math.abs(relieveDate - joiningDate);
+          const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365));
+          experienceYearsSpan.textContent =` ${diffYears} years`;
+        } else {
+          experienceYearsSpan.textContent = "0 years";
+        }
+      };
+
+      joiningDateInput.addEventListener("change", calculateExperience);
+      relieveDateInput.addEventListener("change", calculateExperience);
+
+      card.querySelector(".save-btn").addEventListener("click", function () {
+        const inputs = card.querySelectorAll("input");
+        inputs.forEach(input => {
+          const span = document.createElement("span");
+          span.textContent = input.value;
+          input.replaceWith(span);
+        });
+        this.style.display = "none";
+        card.querySelector(".edit-btn").style.display = "inline";
+      });
+
+      card.querySelector(".edit-btn").addEventListener("click", function () {
+        const spans = card.querySelectorAll("span");
+        spans.forEach(span => {
+          const input = document.createElement("input");
+          input.value = span.textContent;
+          span.replaceWith(input);
+        });
+        this.style.display = "none";
+        card.querySelector(".save-btn").style.display = "inline";
+      });
+
+      card.querySelector(".delete-btn").addEventListener("click", function () {
+        card.remove();
+      });
+
+      container.appendChild(card);
+    });
+
+    document.getElementById("same-as-temp").addEventListener("change", function () {
+      const tempAddress = document.getElementById("temp-address").value;
+      const permAddress = document.getElementById("perm-address");
+      if (this.checked) {
+        permAddress.value = tempAddress;
+        permAddress.disabled = true; // Disable editing when checkbox is checked
+      } else {
+        permAddress.disabled = false; // Enable editing when checkbox is unchecked
+      }
+    });
+
+    // Fetch profiles on page load
+    document.addEventListener("DOMContentLoaded", fetchAllProfiles);
+  </script>
+</body>
+</html>

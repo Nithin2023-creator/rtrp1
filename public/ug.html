@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UG Equivalents Application</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            background-color: #f8fafc;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #1e293b;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        input, select, .file-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+
+        .year-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .error {
+            background: #fee2e2;
+            color: var(--error-color);
+        }
+
+        .file-input {
+            padding: 0.5rem;
+            background: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Undergraduate Equivalents Application</h1>
+        <form id="ugForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="universityName">University Name</label>
+                <input type="text" id="universityName" name="universityName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="collegeName">College Name</label>
+                <input type="text" id="collegeName" name="collegeName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="specialization">Specialization</label>
+                <input type="text" id="specialization" name="specialization" required>
+            </div>
+
+            <div class="form-group">
+                <label for="degree">Degree</label>
+                <select id="degree" name="degree" required>
+                    <option value="">Select Degree</option>
+                    <option value="Bachelor of Arts">BA</option>
+                    <option value="Bachelor of Science">BSc</option>
+                    <option value="Bachelor of Commerce">BCom</option>
+                    <option value="Bachelor of Engineering">BE</option>
+                    <option value="Bachelor of Technology">BTech</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="course">Course</label>
+                <input type="text" id="course" name="course" required>
+            </div>
+
+            <div class="form-group">
+                <label for="percentage">Percentage/CGPA</label>
+                <input type="number" step="0.01" id="percentage" name="percentage" 
+                       min="0" max="100" required>
+            </div>
+
+            <div class="form-group year-group">
+                <div>
+                    <label for="admissionYear">Admission Year</label>
+                    <input type="number" id="admissionYear" name="admissionYear" 
+                           min="2000" max="2099" required>
+                </div>
+                <div>
+                    <label for="graduationYear">Graduation Year</label>
+                    <input type="number" id="graduationYear" name="graduationYear" 
+                           min="2000" max="2099" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="document">Upload Degree Certificate</label>
+                <input type="file" id="document" name="document" 
+                       accept=".pdf,.jpg,.png" required class="file-input">
+                <small>Allowed formats: PDF, JPG, PNG (Max 5MB)</small>
+            </div>
+
+            <button type="submit">Submit Application</button>
+            <div id="message" class="alert"></div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('ugForm');
+        const messageDiv = document.getElementById('message');
+
+        // Year validation
+        document.getElementById('graduationYear').addEventListener('change', function() {
+            const admissionYear = parseInt(document.getElementById('admissionYear').value);
+            const graduationYear = parseInt(this.value);
+            
+            if (admissionYear && graduationYear) {
+                if (graduationYear <= admissionYear) {
+                    showError('Graduation year must be after admission year');
+                    this.value = '';
+                } else if ((graduationYear - admissionYear) > 6) {
+                    showError('Duration should not exceed 6 years');
+                    this.value = '';
+                }
+            }
+        });
+
+        // Percentage validation
+        document.getElementById('percentage').addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            if (value < 0 || value > 100) {
+                showError('Percentage must be between 0 and 100');
+                this.value = '';
+            }
+        });
+
+        function showError(message) {
+            messageDiv.textContent = message;
+            messageDiv.className = 'alert error';
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 3000);
+        }
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            messageDiv.textContent = '';
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/ug', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error || 'Submission failed');
+
+                messageDiv.textContent = 'Application submitted successfully!';
+                messageDiv.className = 'alert success';
+                form.reset();
+                
+                setTimeout(() => {
+                    messageDiv.textContent = '';
+                    messageDiv.className = '';
+                }, 3000);
+
+            } catch (error) {
+                messageDiv.textContent = error.message;
+                messageDiv.className = 'alert error';
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

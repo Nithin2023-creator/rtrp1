@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #1e90ee,#48daea);
+        }
+        .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 1.3rem 2%; /* Reduced padding from 5% to 2% */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(50px);
+    }
+
+    .navbar {
+        display: flex;
+        align-items: center;
+        gap: 1rem; /* Reduced gap from 2rem */
+        margin-right: 0; /* Removed margin-right */
+        padding-right: 10px; /* Added padding */
+    }
+
+    /* Keep existing theme toggle styles */
+    #theme-toggle {
+        margin-left: 0.5rem; /* Reduced margin */
+        color: #fff;
+        font-size: 1.8rem !important;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+        
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .1);
+            backdrop-filter: blur(50px);
+            z-index: -1;
+        }
+        
+    #theme-toggle:hover {
+        transform: rotate(180deg);
+        color: #00abf0;
+    }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .4), transparent);
+            transition: .5s;
+        }
+
+        .header:hover::after {
+            left: 100%;
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            margin-right: auto;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-right: 2rem;
+        }
+
+        .navbar a {
+            font-size: 1.15rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00abf0;
+        }
+
+        #theme-toggle {
+            margin-left: 1rem;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-top: 120px;
+            padding: 20px;
+            color: #fff;
+        }
+        @keyframes tooltipFade {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Add this class for highlighting the tour element */
+    .tour-highlight {
+        position: relative; /* Needed for z-index to work with overlay */
+        z-index: 1001; /* Ensure highlighted element is above overlay */
+        outline: 3px solid #007bff; /* Example: Blue outline */
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); /* Optional: Add a glow */
+        border-radius: 4px; /* Optional: Match element's border-radius */
+        transition: outline 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    }
+
+        body.dark-mode {
+            background: linear-gradient(to right, #0b0b0c, #0c0d0e);
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 10%;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+
+        .dashboard-container {
+            display: flex;
+            gap: 2rem;
+            padding: 20px 10%;
+            margin-top: 40px; /* Reduced from 100px */
+        }
+
+        .profile-card {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .details-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem; /* Reduced padding */
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transform: translateX(100%);
+            opacity: 0;
+            animation: slideIn 0.5s forwards;
+            max-height: 300px; /* Added max-height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .details-card h2 {
+            margin: 10px 0; /* Reduced margins */
+        }
+
+        .details-card p {
+            margin: 5px 0 15px 0; /* Adjusted margins */
+        }
+
+        .details-card i {
+            font-size: 3rem; /* Reduced from 4rem */
+            margin-bottom: 0.5rem; /* Reduced margin */
+        }
+
+        .fill-details-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px; /* Reduced from 20px */
+        }
+
+        .fill-details-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .notification-marquee {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            background:greenyellow;
+            
+            padding: 10px 0;
+            z-index: 99;
+        }
+
+        .marquee-content {
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+            display: inline-block;
+            padding: 0 20px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .important-notification {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .tour-tooltip {
+        position: absolute;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-width: 250px;
+        color: #333;
+        animation: tooltipFade 0.3s ease-in-out;
+        /* Add margin-top to make space for the arrow */
+        margin-top: 10px; 
+    }
+
+    /* Add styles for the arrow */
+    .tour-tooltip::before {
+        content: '';
+        position: absolute;
+        bottom: 100%; /* Position arrow at the top */
+        left: 25%;
+        transform: translateX(-50%);
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent transparent white transparent; /* Creates upward arrow */
+    }
+
+
+
+        #menu-icon {
+        font-size: 2.4rem;
+        color: #fff;
+        cursor: pointer;
+        display: none;
+        z-index: 1000;
+        margin-right: 20px;
+        padding: 5px;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        #menu-icon {
+            display: inline-block;
+        }
+
+        .navbar {
+            position: absolute;
+            top: 100%;
+            right: -100%;
+            width: 200px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            flex-direction: column;
+            padding: 1rem;
+            transition: 0.5s ease;
+            border-radius: 0 0 0 10px;
+        }
+
+        .navbar.active {
+            right: 0;
+        }
+    }
+
+        
+    
+    .tour-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+        pointer-events: none;
+    }
+
+    .tour-tooltip {
+        position: absolute;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-width: 250px;
+        color: #333;
+        animation: tooltipFade 0.3s ease-in-out;
+    }
+
+    .tour-tooltip button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    @keyframes tooltipFade {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+       
+    
+    </style>
+    <style>
+        /* ... existing styles ... */
+    
+        @media (max-width: 768px) {
+            /* Existing mobile styles... */
+            
+            /* Add these new responsive styles */
+            .header {
+                padding: 1rem 2%;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                margin-top: 100px;
+                padding: 10px;
+            }
+            
+            .dashboard-container {
+                flex-direction: column;
+                padding: 10px 5%;
+                gap: 1.5rem;
+            }
+            
+            .profile-card, .details-card {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .user-info {
+                margin: 10px 5%;
+                padding: 15px;
+            }
+            
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .profile-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .fill-details-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+            
+            .notification-marquee {
+                top: 80px;
+                padding: 8px 0;
+            }
+            
+            .marquee-content {
+                font-size: 0.9rem;
+                animation: marquee 15s linear infinite;
+            }
+        }
+    
+        @media (max-width: 480px) {
+            /* Existing small mobile styles... */
+            
+            /* Add these extra small screen adjustments */
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .navbar a {
+                font-size: 0.9rem;
+                padding: 0.3rem 0.6rem;
+            }
+            
+            .details-card {
+                padding: 1rem;
+            }
+            
+            .details-card i {
+                font-size: 2rem;
+            }
+            
+            .details-card h2 {
+                font-size: 1.2rem;
+            }
+            
+            .details-card p {
+                font-size: 0.9rem;
+            }
+        }
+        .profile-section {
+    margin-bottom: 25px;
+}
+.skill-input, .subject-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    /* Change text color to be visible, e.g., black */
+    color: #000000; 
+    /* Optional: Set a specific background if needed */
+    /* background-color: #ffffff; */ 
+    /* Increase max-width */
+    max-width: 450px; /* Increased from 300px or previous value */
+}
+
+.skills-container, .subjects-container {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.section-title{
+    margin-left: 12%;
+}
+
+.skills-list, .subjects-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.skill-item, .subject-item {
+    background: #267fd7;
+    padding: 6px 12px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.add-skill, .add-subject {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* .skill-input, .subject-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #48daea;
+    max-width: 300px;
+} */
+
+.add-btn {
+    background: #2575fc;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.add-btn:hover {
+    background: #1957b8;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+.skills-container {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+    backdrop-filter: blur(10px);
+    min-height: 100px; /* Ensure container has minimum height */
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+    min-height: 50px; /* Ensure list has minimum height */
+}
+
+.skill-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white; /* Ensure text is visible */
+}
+.subjects-container {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+    backdrop-filter: blur(10px);
+    min-height: 100px;
+}
+
+.subjects-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+    min-height: 50px;
+}
+
+.subject-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+}
+
+.subject-actions {
+    display: flex;
+    gap: 8px;
+}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">TATHYA</a>
+        <div class="bx bx-menu" id="menu-icon"></div>
+        <nav class="navbar">
+            <a href="/faculty_dashboard">Dashboard</a>
+            <a href="/faculty_profile">My Profile</a>
+            <a href="/faculty_notifications">Notifications</a>
+            <a href="/rpft">RPFT</a>
+            <a href="/login_auth.html" style="color: red;"><b>Logout</b></a>
+            <i class='bx bx-moon' id="theme-toggle"></i>
+        </nav>
+    </header>
+
+    <div class="notification-marquee">
+        <div class="marquee-content" id="marqueeContent">
+            <!-- Notifications will be displayed here -->
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="dashboard-container">
+            <!-- <div class="profile-card" id="profileCard">
+                <h3>Profile Status</h3>
+                <p id="profileStatus">Loading...</p>
+                <button id="profileButton" onclick="handleProfileAction()">Loading...</button>
+            </div> -->
+
+            <div class="profile-card">
+                <div class="user-info">
+                    <div class="profile-section">
+                        <img src="default-profile.png" alt="Profile" class="profile-image" id="userPhoto">
+                        <div>
+                            <h2 id="userName">Loading...</h2>
+                            <p id="userEmail">Loading...</p>
+                            <p id="userDepartment">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-card">
+                <i class='bx bx-edit-alt'></i>
+                <h2>Complete Your Profile</h2>
+                <p>Please fill in your professionaland personal ddetails.</p>
+                <button class="fill-details-btn" onclick="window.location.href='/form'">
+                    Fill Details
+                </button>
+            </div>
+        </div>
+        <div class="profile-section">
+    <h2 class="section-title">Skills</h2>
+    <div class="skills-container">
+        <div class="skills-list" id="skillsList">
+            <!-- Skills will be dynamically inserted here -->
+        </div>
+        <div class="add-skill">
+            <input type="text" id="newSkill" placeholder="Add new skill" class="skill-input">
+            <button onclick="addSkill()" class="add-btn">Add</button>
+        </div>
+    </div>
+</div>
+        
+<div class="profile-section">
+    <h2 class="section-title">Subjects Taught</h2>
+    <div class="subjects-container">
+        <div class="subjects-list" id="subjectsList"></div>
+        <div class="add-subject">
+            <input type="text" id="newSubject" placeholder="Add new subject" class="subject-input">
+            <button onclick="addSubject()" class="add-btn">Add</button>
+        </div>
+    </div>
+</div>
+    <!-- Add these sections after the details-card -->
+
+
+    <script>
+const menuIcon = document.querySelector('#menu-icon');
+    const navbar = document.querySelector('.navbar');
+
+    menuIcon.onclick = () => {
+        navbar.classList.toggle('active');
+        menuIcon.classList.toggle('bx-x');
+    };
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!menuIcon.contains(e.target) && !navbar.contains(e.target)) {
+            navbar.classList.remove('active');
+            menuIcon.classList.remove('bx-x');
+        }
+    });
+
+
+        // Theme Toggle
+       
+        // Load user info
+        window.onload = function() {
+            const userName = localStorage.getItem('userName');
+            const userEmail = localStorage.getItem('userEmail');
+            const userDepartment = localStorage.getItem('userDepartment');
+            const profilePhoto = localStorage.getItem('profilePhoto');
+
+            document.getElementById('userName').textContent = userName || 'Faculty Name';
+            document.getElementById('userEmail').textContent = userEmail || 'faculty@example.com';
+            document.getElementById('userDepartment').textContent = userDepartment || 'Department';
+            
+            if (profilePhoto && profilePhoto !== 'default-profile.png') {
+                document.getElementById('userPhoto').src = profilePhoto;
+            }
+        };
+
+        // Add this to your existing JavaScript
+        async function checkProfileStatus() {
+            const userEmail = localStorage.getItem('userEmail');
+            try {
+                const response = await fetch(`http://localhost:4009/api/faculty/details/check?email=${userEmail}`);
+                const data = await response.json();
+                
+                const statusText = document.getElementById('profileStatus');
+                const profileButton = document.getElementById('profileButton');
+                
+                if (data.exists) {
+                    statusText.textContent = 'Profile Complete';
+                    profileButton.textContent = 'Edit Profile';
+                    profileButton.onclick = () => window.location.href = '/form?mode=edit';
+                } else {
+                    statusText.textContent = 'Profile Incomplete';
+                    profileButton.textContent = 'Complete Profile';
+                    profileButton.onclick = () => window.location.href = '/form';
+                }
+            } catch (error) {
+                console.error('Error checking profile:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkProfileStatus);
+
+        // Add this to your existing script section
+        async function fetchNotifications() {
+            try {
+                const response = await fetch('http://localhost:4009/api/notifications/active');
+                const data = await response.json();
+                
+                if (data.success && data.notifications.length > 0) {
+                    const marqueeContent = data.notifications.map(notif => {
+                        const className = notif.important ? 'important-notification' : '';
+                        return `<span class="${className}">📢 ${notif.message} &nbsp;&nbsp;&nbsp;</span>`;
+                    }).join('');
+                    
+                    document.getElementById('marqueeContent').innerHTML = marqueeContent;
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // Fetch notifications every 30 seconds
+        setInterval(fetchNotifications, 30000);
+        fetchNotifications(); // Initial fetch
+
+
+
+        const tourSteps = [
+        {
+            element: 'a[href="/faculty_dashboard"]',
+            message: 'Welcome to your Dashboard! This is your home page where you can view your profile overview and important notifications.'
+        },
+        {
+            element: 'a[href="/faculty_profile"]',
+            message: 'Access and manage your complete profile information here. Keep your details up to date!'
+        },
+        {
+            element: 'a[href="/faculty_notifications"]',
+            message: 'Check all your notifications and important announcements in one place.'
+        },
+        {
+            element: 'a[href="/rpft"]',
+            message: 'RPFT (Research,Publications & FDPS Tracker) - Track and manage your research publications and academic achievements.'
+        },
+        
+    ];
+    function startTour() {
+        let currentStep = 0;
+        let highlightedElement = null;
+        const overlay = document.createElement('div');
+        overlay.className = 'tour-overlay';
+        document.body.appendChild(overlay);
+
+        function removeHighlight() {
+            if (highlightedElement) {
+                highlightedElement.classList.remove('tour-highlight');
+                highlightedElement = null;
+            }
+        }
+
+        function cleanupTour() {
+            removeHighlight(); // Remove highlight from the last element
+            overlay.remove();
+            localStorage.setItem('tourCompleted', 'true');
+        }
+
+        function showStep(step) {
+            const element = document.querySelector(tourSteps[step].element);
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tour-tooltip';
+            tooltip.innerHTML = `
+                <p>${tourSteps[step].message}</p>
+                <button>${step === tourSteps.length - 1 ? 'Finish' : 'Next'}</button>
+            `;
+
+            const rect = element.getBoundingClientRect();
+            tooltip.style.top = `${rect.bottom + 10}px`;
+            tooltip.style.left = `${rect.left}px`;
+
+            document.body.appendChild(tooltip);
+
+            tooltip.querySelector('button').addEventListener('click', () => {
+                tooltip.remove();
+                if (step < tourSteps.length - 1) {
+                    showStep(step + 1);
+                } else {
+                    overlay.remove();
+                    localStorage.setItem('tourCompleted', 'true');
+                }
+            });
+
+            element.style.position = 'relative';
+            element.style.zIndex = '1001';
+        }
+
+        showStep(0);
+    }
+
+    // Start tour if it hasn't been completed
+    function checkScreenSize() {
+        if (window.innerWidth > 768) { // Only show tour on screens wider than 768px
+            setTimeout(startTour, 1000);
+        }
+    }
+
+    // Call this on page load
+    window.addEventListener('load', checkScreenSize);
+    
+    // Also call when window is resized
+    window.addEventListener('resize', checkScreenSize);
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // Check theme on page load
+    function applyTheme() {
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.classList.remove('bx-moon');
+            themeToggle.classList.add('bx-sun');
+        } else {
+            body.classList.remove('dark-mode');
+            themeToggle.classList.add('bx-moon');
+            themeToggle.classList.remove('bx-sun');
+        }
+    }
+
+    // Apply theme on page load
+    applyTheme();
+
+    // Toggle theme
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        
+        // Update localStorage
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        // Update icon
+        if (isDark) {
+            themeToggle.classList.remove('bx-moon');
+            themeToggle.classList.add('bx-sun');
+        } else {
+            themeToggle.classList.add('bx-moon');
+            themeToggle.classList.remove('bx-sun');
+        }
+    });
+
+    // Listen for theme changes from other pages
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'theme') {
+            applyTheme();
+        }
+    });
+
+
+    // Add to existing script section
+    async function loadSkillsAndSubjects() {
+    const userEmail = localStorage.getItem('userEmail');
+    try {
+        // Change this endpoint to match your backend
+        const response = await fetch(`http://localhost:4009/api/faculty/all-data/${userEmail}`);
+        const data = await response.json();
+        
+        if (data.data?.skills) {
+            renderSkills(data.data.skills);
+        }
+        if (data.data?.subjects) {
+            renderSubjects(data.data.subjects);
+        }
+    } catch (error) {
+        console.error('Error loading skills/subjects:', error);
+    }
+}
+
+// Make sure this is called when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    loadSkillsAndSubjects();
+    // ... your other initialization code ...
+});
+function renderSkills(skills) {
+    const skillsList = document.getElementById('skillsList');
+    skillsList.innerHTML = skills.map((skill, index) => `
+        <div class="skill-item" data-index="${index}">
+            <span class="skill-text">${skill}</span>
+            <input type="text" class="edit-input" value="${skill}" style="display:none;">
+            <div class="skill-actions">
+                <button class="edit-btn" onclick="editSkill(${index})">Edit</button>
+                <button class="delete-btn" onclick="deleteSkill('${skill}')">×</button>
+                <button class="save-btn" onclick="saveSkill(${index})" style="display:none;">Save</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderSubjects(subjects) {
+    const subjectsList = document.getElementById('subjectsList');
+    subjectsList.innerHTML = subjects.map((subject, index) => `
+        <div class="subject-item" data-index="${index}">
+            <span class="subject-text">${subject}</span>
+            <input type="text" class="edit-input" value="${subject}" style="display:none;">
+            <div class="subject-actions">
+                <button class="edit-btn" onclick="editSubject(${index})">Edit</button>
+                <button class="delete-btn" onclick="deleteSubject('${subject}')">×</button>
+                <button class="save-btn" onclick="saveSubject(${index})" style="display:none;">Save</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Add these subject functions
+async function editSubject(index) {
+    const subjectItem = document.querySelector(`.subject-item[data-index="${index}"]`);
+    subjectItem.querySelector('.subject-text').style.display = 'none';
+    subjectItem.querySelector('.edit-input').style.display = 'block';
+    subjectItem.querySelector('.edit-btn').style.display = 'none';
+    subjectItem.querySelector('.save-btn').style.display = 'block';
+}
+
+
+async function addSubject() {
+    const newSubject = document.getElementById('newSubject').value.trim();
+    if (!newSubject) return;
+    
+    const userEmail = localStorage.getItem('userEmail');
+    try {
+        await fetch('http://localhost:4009/api/faculty/subjects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, subject: newSubject })
+        });
+        document.getElementById('newSubject').value = '';
+        loadSkillsAndSubjects();
+    } catch (error) {
+        console.error('Error adding subject:', error);
+    }
+}
+
+async function deleteSkill(skill) {
+    const userEmail = localStorage.getItem('userEmail');
+    try {
+        await fetch('http://localhost:4009/api/faculty/skills', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, skill })
+        });
+        loadSkillsAndSubjects();
+    } catch (error) {
+        console.error('Error deleting skill:', error);
+    }
+}
+async function addSkill() {
+        const newSkillInput = document.getElementById('newSkill');
+        const newSkill = newSkillInput.value.trim();
+        if (!newSkill) return; // Don't add empty skills
+
+        const userEmail = localStorage.getItem('userEmail');
+        if (!userEmail) {
+            console.error("Cannot add skill: User email not found.");
+            alert("Error: Could not identify user. Please log in again."); // User feedback
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:4009/api/faculty/skills', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, skill: newSkill })
+            });
+
+            if (!response.ok) {
+                 const errorData = await response.json(); // Try to get error details from backend
+                 throw new Error(`Failed to add skill: ${errorData.message || response.statusText}`);
+            }
+
+            newSkillInput.value = ''; // Clear the input field
+            loadSkillsAndSubjects(); // Refresh the list
+        } catch (error) {
+            console.error('Error adding skill:', error);
+            alert(`Error adding skill: ${error.message}`); // User feedback
+        }
+    }
+
+async function deleteSubject(subject) {
+    const userEmail = localStorage.getItem('userEmail');
+    try {
+        await fetch('http://localhost:4009/api/faculty/subjects', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, subject })
+        });
+        loadSkillsAndSubjects();
+    } catch (error) {
+        console.error('Error deleting subject:', error);
+    }
+}
+
+// ... existing code ...
+
+async function editSkill(index) {
+    const skillItem = document.querySelector(`.skill-item[data-index="${index}"]`);
+    skillItem.querySelector('.skill-text').style.display = 'none';
+    skillItem.querySelector('.edit-input').style.display = 'block';
+    skillItem.querySelector('.edit-btn').style.display = 'none';
+    skillItem.querySelector('.save-btn').style.display = 'block';
+}
+
+async function saveSkill(index) {
+    const skillItem = document.querySelector(`.skill-item[data-index="${index}"]`);
+    const newSkill = skillItem.querySelector('.edit-input').value.trim();
+    
+    if (!newSkill) return;
+
+    const userEmail = localStorage.getItem('userEmail');
+    const oldSkill = skillItem.querySelector('.skill-text').textContent;
+    
+    try {
+        // First delete the old skill
+        await fetch('http://localhost:4009/api/faculty/skills', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, skill: oldSkill })
+        });
+        
+        // Then add the new skill
+        await fetch('http://localhost:4009/api/faculty/skills', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, skill: newSkill })
+        });
+        
+        // Refresh the list
+        loadSkillsAndSubjects();
+    } catch (error) {
+        console.error('Error updating skill:', error);
+    }
+}
+
+// Similar functions for subjects
+async function editSubject(index) {
+    const subjectItem = document.querySelector(`.subject-item[data-index="${index}"]`);
+    subjectItem.querySelector('.subject-text').style.display = 'none';
+    subjectItem.querySelector('.edit-input').style.display = 'block';
+    subjectItem.querySelector('.edit-btn').style.display = 'none';
+    subjectItem.querySelector('.save-btn').style.display = 'block';
+}
+
+async function saveSubject(index) {
+    const subjectItem = document.querySelector(`.subject-item[data-index="${index}"]`);
+    const newSubject = subjectItem.querySelector('.edit-input').value.trim();
+    
+    if (!newSubject) return;
+
+    const userEmail = localStorage.getItem('userEmail');
+    const oldSubject = subjectItem.querySelector('.subject-text').textContent;
+    
+    try {
+        // First delete the old subject
+        await fetch('http://localhost:4009/api/faculty/subjects', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, subject: oldSubject })
+        });
+        
+        // Then add the new subject
+        await fetch('http://localhost:4009/api/faculty/subjects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, subject: newSubject })
+        });
+        
+        // Refresh the list
+        loadSkillsAndSubjects();
+    } catch (error) {
+        console.error('Error updating subject:', error);
+    }
+}
+
+async function saveSubject(index) {
+    const subjectItem = document.querySelector(`.subject-item[data-index="${index}"]`);
+    const newSubject = subjectItem.querySelector('.edit-input').value.trim();
+    
+    if (!newSubject) return;
+
+    const userEmail = localStorage.getItem('userEmail');
+    const oldSubject = subjectItem.querySelector('.subject-text').textContent;
+    
+    try {
+        await fetch('http://localhost:4009/api/faculty/subjects', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, subject: oldSubject })
+        });
+        
+        await fetch('http://localhost:4009/api/faculty/subjects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, subject: newSubject })
+        });
+        
+        loadSkillsAndSubjects();
+    } catch (error) {
+        console.error('Error updating subject:', error);
+    }
+}
+
+// ... existing code ...
+
+// Call this when page loads
+document.addEventListener('DOMContentLoaded', loadSkillsAndSubjects);
+    </script>
+</body>
+</html>

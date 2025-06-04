@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Publications</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #1e90ee, #48daea);
+            min-height: 100vh;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.3rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(50px);
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .navbar a {
+            font-size: 1.15rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00abf0;
+        }
+
+        .navbar a.active {
+            background: #2575fc;
+            color: white;
+        }
+
+        .research-container {
+            margin-top: 100px;
+            padding: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-select {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+        }
+
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .research-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .research-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .research-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .research-info {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .research-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            background: #2196F3;
+        }
+
+        .view-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background: #1976D2;
+        }
+
+        #researchCount {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            margin-top: 2%;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            padding: 20px;
+        }
+
+        .error {
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">TATHYA</a>
+        <nav class="navbar">
+            <a href="/faculty_dashboard">Dashboard</a>
+            <a href="/research">Research</a>
+            <a href="/view_research" class="active">View Research</a>
+            <a href="/faculty_profile">Profile</a>
+        </nav>
+    </header>
+
+    <div class="research-container">
+        <div id="researchCount"></div>
+        
+        <div class="filters">
+            <select id="departmentFilter" class="filter-select">
+                <option value="">All Departments</option>
+                <option value="CSE">CSE</option>
+                <option value="DS">DS</option>
+                <option value="AIML">AIML</option>
+                <option value="IT">IT</option>
+            </select>
+
+            <select id="typeFilter" class="filter-select">
+                <option value="">All Types</option>
+                <option value="journal">Journal Papers</option>
+                <option value="conference">Conference Papers</option>
+                <option value="book">Book Chapters</option>
+                <option value="patent">Patents</option>
+            </select>
+        </div>
+
+        <div class="research-grid" id="researchGrid">
+            <div class="loading">Loading research publications...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadResearch() {
+            try {
+                const department = document.getElementById('departmentFilter').value;
+                const type = document.getElementById('typeFilter').value;
+                console.log('Fetching research with filters:', { department, type });
+
+                const response = await fetch(`http://localhost:4009/api/research/all?department=${department}&type=${type}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Received research data:', data);
+
+                const researchGrid = document.getElementById('researchGrid');
+                document.getElementById('researchCount').textContent = 
+                    `Total Publications: ${data.publications?.length || 0}`;
+
+                if (data.success && data.publications && data.publications.length > 0) {
+                    researchGrid.innerHTML = data.publications.map(pub => `
+                        <div class="research-card">
+                            <div class="research-type type-${pub.type?.toLowerCase()}">${pub.type || 'N/A'}</div>
+                            <div class="research-title">${pub.title || 'Untitled'}</div>
+                            <div class="research-info">
+                                <strong>Authors:</strong> ${pub.authors || 'N/A'}
+                            </div>
+                            <div class="research-info">
+                                <strong>Department:</strong> ${pub.department || 'N/A'}
+                            </div>
+                            <div class="research-info">
+                                <strong>Publication:</strong> ${pub.publication || 'N/A'}
+                            </div>
+                            <div class="research-info">
+                                <strong>Date:</strong> ${pub.date || 'N/A'}
+                            </div>
+                            ${pub.abstract ? `
+                                <div class="research-abstract">
+                                    <strong>Abstract:</strong> ${pub.abstract}
+                                </div>
+                            ` : ''}
+                            ${pub.documentPath ? `
+                                <button class="view-doc-btn" onclick="viewDocument('${pub.documentPath}')">
+                                    View Document
+                                </button>
+                            ` : '<p>No document available</p>'}
+                        </div>
+                    `).join('');
+                } else {
+                    researchGrid.innerHTML = '<div class="no-results">No publications found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading research:', error);
+                document.getElementById('researchGrid').innerHTML = 
+                    `<div class="no-results">Error loading research: ${error.message}</div>`;
+            }
+        }
+
+        function viewDocument(filename) {
+            if (!filename) {
+                alert('Document not available');
+                return;
+            }
+            // Open PDF in a new window using the dedicated endpoint
+            const url = `http://localhost:4009/api/research/document/${filename}`;
+            console.log('Opening PDF:', url);
+            
+            // Create a modal to display the PDF
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = `
+                width: 90%;
+                height: 90%;
+                border: none;
+                background: white;
+            `;
+            iframe.src = url;
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                background: #ff4444;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            `;
+            closeBtn.onclick = () => modal.remove();
+
+            modal.appendChild(iframe);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+        }
+
+        // Add event listeners
+        document.getElementById('departmentFilter').addEventListener('change', loadResearch);
+        document.getElementById('typeFilter').addEventListener('change', loadResearch);
+        document.addEventListener('DOMContentLoaded', loadResearch);
+    </script>
+</body>
+</html>
