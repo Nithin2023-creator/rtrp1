@@ -4,7 +4,8 @@
   "main": "logauth.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node logauth.js"
+    "start": "node logauth.js",
+    "build": "echo \"No build step required\""
   },
   "keywords": [],
   "author": "",
